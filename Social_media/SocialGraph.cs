@@ -181,5 +181,75 @@ namespace Social_media
             path.Reverse();
             return path;
         }
+        // ─────────────────────────────────────────────
+        // 6. Проверка связности графа
+        // ─────────────────────────────────────────────
+        public bool IsConnected() => CountComponents() == 1;
+
+        // ─────────────────────────────────────────────
+        // 7. Количество компонент связности
+        // ─────────────────────────────────────────────
+        public int CountComponents()
+        {
+            var visited = new bool[UserCount];
+            int count = 0;
+            var queue = new int[UserCount];
+
+            for (int start = 0; start < UserCount; start++)
+            {
+                if (visited[start]) continue;
+                count++;
+                // BFS для обхода компоненты
+                int head = 0, tail = 0;
+                visited[start] = true;
+                queue[tail++] = start;
+                while (head < tail)
+                {
+                    int cur = queue[head++];
+                    foreach (int nb in adjacency[cur])
+                    {
+                        if (!visited[nb])
+                        {
+                            visited[nb] = true;
+                            queue[tail++] = nb;
+                        }
+                    }
+                }
+            }
+            return count;
+        }
+
+        /// <summary>Возвращает массив: componentId[i] — номер компоненты пользователя i.</summary>
+        public int[] GetComponentIds()
+        {
+            var comp = new int[UserCount];
+            for (int i = 0; i < UserCount; i++) comp[i] = -1;
+
+            int compId = 0;
+            var queue = new int[UserCount];
+
+            for (int start = 0; start < UserCount; start++)
+            {
+                if (comp[start] != -1) continue;
+                int head = 0, tail = 0;
+                comp[start] = compId;
+                queue[tail++] = start;
+                while (head < tail)
+                {
+                    int cur = queue[head++];
+                    foreach (int nb in adjacency[cur])
+                    {
+                        if (comp[nb] == -1)
+                        {
+                            comp[nb] = compId;
+                            queue[tail++] = nb;
+                        }
+                    }
+                }
+                compId++;
+            }
+            return comp;
+        }
+
     }
 }
