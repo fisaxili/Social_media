@@ -138,7 +138,157 @@
             this.graphPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.graphPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 
+            // ── TAB 2: Статистика ────────────────────────────────────
+            this.tabStats.Text = "Статистика";
+            this.tabStats.Controls.Add(this.statsPanel);
+            this.tabStats.Controls.Add(this.statsSidePanel);
 
+            this.statsSidePanel.Dock = System.Windows.Forms.DockStyle.Left;
+            this.statsSidePanel.Width = 320;
+            this.statsSidePanel.Controls.Add(this.txtStats);
+            this.statsSidePanel.Controls.Add(this.lblProgress);
+            this.statsSidePanel.Controls.Add(this.progressBar);
+            this.statsSidePanel.Controls.Add(this.btnCalcDiameter);
+            this.statsSidePanel.Controls.Add(this.btnCalcStats);
+            this.statsSidePanel.Controls.Add(this.lblStatsTitle);
+
+            this.lblStatsTitle.AutoSize = true;
+            this.lblStatsTitle.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
+            this.lblStatsTitle.Location = new System.Drawing.Point(10, 10);
+            this.lblStatsTitle.Text = "Статистика сети";
+
+            this.btnCalcStats.Location = new System.Drawing.Point(10, 40);
+            this.btnCalcStats.Size = new System.Drawing.Size(290, 30);
+            this.btnCalcStats.Text = "Вычислить статистику";
+            this.btnCalcStats.Click += new System.EventHandler(this.BtnCalcStats_Click);
+
+            this.btnCalcDiameter.Location = new System.Drawing.Point(10, 78);
+            this.btnCalcDiameter.Size = new System.Drawing.Size(290, 30);
+            this.btnCalcDiameter.Text = "Вычислить диаметр";
+            this.btnCalcDiameter.Click += new System.EventHandler(this.BtnCalcDiameter_Click);
+
+            this.progressBar.Location = new System.Drawing.Point(10, 115);
+            this.progressBar.Size = new System.Drawing.Size(290, 16);
+            this.progressBar.Visible = false;
+
+            this.lblProgress.AutoSize = true;
+            this.lblProgress.Location = new System.Drawing.Point(10, 135);
+            this.lblProgress.Text = "";
+
+            this.txtStats.Location = new System.Drawing.Point(10, 158);
+            this.txtStats.Size = new System.Drawing.Size(295, 560);
+            this.txtStats.ReadOnly = true;
+            this.txtStats.Font = new System.Drawing.Font("Consolas", 9.5F);
+            this.txtStats.BorderStyle = System.Windows.Forms.BorderStyle.None;
+
+            this.statsPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.statsPanel.Controls.Add(this.degreeChartPanel);
+            this.statsPanel.Controls.Add(this.lblChartTitle);
+
+            this.lblChartTitle.Dock = System.Windows.Forms.DockStyle.Top;
+            this.lblChartTitle.Height = 28;
+            this.lblChartTitle.Text = "Распределение степеней вершин";
+            this.lblChartTitle.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lblChartTitle.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
+
+            this.degreeChartPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.degreeChartPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+
+            // ── TAB 3: BFS ───────────────────────────────────────────
+            this.tabBFS.Text = "BFS / Уровни";
+            this.tabBFS.Controls.Add(this.bfsHighlightPanel);
+            this.tabBFS.Controls.Add(this.bfsSidePanel);
+
+            this.bfsSidePanel.Dock = System.Windows.Forms.DockStyle.Left;
+            this.bfsSidePanel.Width = 300;
+            this.bfsSidePanel.Controls.Add(this.txtBfsResult);
+            this.bfsSidePanel.Controls.Add(this.btnBfs);
+            this.bfsSidePanel.Controls.Add(this.nudBfsDepth);
+            this.bfsSidePanel.Controls.Add(this.lblBfsDepth);
+            this.bfsSidePanel.Controls.Add(this.nudBfsSource);
+            this.bfsSidePanel.Controls.Add(this.lblBfsSource);
+
+            this.lblBfsSource.AutoSize = true;
+            this.lblBfsSource.Location = new System.Drawing.Point(10, 10);
+            this.lblBfsSource.Text = "ID пользователя (источник):";
+
+            this.nudBfsSource.Location = new System.Drawing.Point(10, 30);
+            this.nudBfsSource.Width = 170;
+            this.nudBfsSource.Minimum = 1;
+            this.nudBfsSource.Maximum = 500;
+            this.nudBfsSource.Value = 1;
+
+            this.lblBfsDepth.AutoSize = true;
+            this.lblBfsDepth.Location = new System.Drawing.Point(10, 60);
+            this.lblBfsDepth.Text = "Глубина k:";
+
+            this.nudBfsDepth.Location = new System.Drawing.Point(10, 80);
+            this.nudBfsDepth.Width = 170;
+            this.nudBfsDepth.Minimum = 1;
+            this.nudBfsDepth.Maximum = 20;
+            this.nudBfsDepth.Value = 3;
+
+            this.btnBfs.Location = new System.Drawing.Point(10, 115);
+            this.btnBfs.Size = new System.Drawing.Size(170, 30);
+            this.btnBfs.Text = "Запустить BFS";
+            this.btnBfs.Click += new System.EventHandler(this.BtnBfs_Click);
+
+            this.txtBfsResult.Location = new System.Drawing.Point(10, 155);
+            this.txtBfsResult.Size = new System.Drawing.Size(275, 560);
+            this.txtBfsResult.ReadOnly = true;
+            this.txtBfsResult.Font = new System.Drawing.Font("Consolas", 9.5F);
+            this.txtBfsResult.BorderStyle = System.Windows.Forms.BorderStyle.None;
+
+            this.bfsHighlightPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.bfsHighlightPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+
+            // ── TAB 4: Кратчайший путь ───────────────────────────────
+            this.tabPath.Text = "Кратчайший путь";
+            this.tabPath.Controls.Add(this.pathVizPanel);
+            this.tabPath.Controls.Add(this.pathSidePanel);
+
+            this.pathSidePanel.Dock = System.Windows.Forms.DockStyle.Left;
+            this.pathSidePanel.Width = 300;
+            this.pathSidePanel.Controls.Add(this.txtPathResult);
+            this.pathSidePanel.Controls.Add(this.btnFindPath);
+            this.pathSidePanel.Controls.Add(this.nudPathTo);
+            this.pathSidePanel.Controls.Add(this.lblPathTo);
+            this.pathSidePanel.Controls.Add(this.nudPathFrom);
+            this.pathSidePanel.Controls.Add(this.lblPathFrom);
+
+            this.lblPathFrom.AutoSize = true;
+            this.lblPathFrom.Location = new System.Drawing.Point(10, 10);
+            this.lblPathFrom.Text = "От (ID):";
+
+            this.nudPathFrom.Location = new System.Drawing.Point(10, 30);
+            this.nudPathFrom.Width = 170;
+            this.nudPathFrom.Minimum = 1;
+            this.nudPathFrom.Maximum = 500;
+            this.nudPathFrom.Value = 1;
+
+            this.lblPathTo.AutoSize = true;
+            this.lblPathTo.Location = new System.Drawing.Point(10, 60);
+            this.lblPathTo.Text = "До (ID):";
+
+            this.nudPathTo.Location = new System.Drawing.Point(10, 80);
+            this.nudPathTo.Width = 170;
+            this.nudPathTo.Minimum = 1;
+            this.nudPathTo.Maximum = 500;
+            this.nudPathTo.Value = 100;
+
+            this.btnFindPath.Location = new System.Drawing.Point(10, 115);
+            this.btnFindPath.Size = new System.Drawing.Size(170, 30);
+            this.btnFindPath.Text = "Найти путь";
+            this.btnFindPath.Click += new System.EventHandler(this.BtnFindPath_Click);
+
+            this.txtPathResult.Location = new System.Drawing.Point(10, 155);
+            this.txtPathResult.Size = new System.Drawing.Size(275, 560);
+            this.txtPathResult.ReadOnly = true;
+            this.txtPathResult.Font = new System.Drawing.Font("Consolas", 9.5F);
+            this.txtPathResult.BorderStyle = System.Windows.Forms.BorderStyle.None;
+
+            this.pathVizPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.pathVizPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 
             // ── Form ─────────────────────────────────────────────────
             this.ClientSize = new System.Drawing.Size(1200, 800);
