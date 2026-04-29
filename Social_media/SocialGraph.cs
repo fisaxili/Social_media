@@ -42,5 +42,27 @@ namespace Social_media
 
         /// <summary>Получить список друзей пользователя.</summary>
         public IReadOnlyList<int> GetFriends(int user) => adjacency[user];
+        // ─────────────────────────────────────────────
+        // 1. Степень вершины (количество друзей)
+        // ─────────────────────────────────────────────
+        public int Degree(int user) => adjacency[user].Count;
+
+        // ─────────────────────────────────────────────
+        // 2. Пользователь с максимальным числом друзей
+        // ─────────────────────────────────────────────
+        public int MostPopularUser()
+        {
+            int maxUser = 0;
+            int maxDeg = adjacency[0].Count;
+            for (int i = 1; i < UserCount; i++)
+            {
+                if (adjacency[i].Count > maxDeg)
+                {
+                    maxDeg = adjacency[i].Count;
+                    maxUser = i;
+                }
+            }
+            return maxUser;
+        }
     }
 }
