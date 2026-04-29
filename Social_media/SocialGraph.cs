@@ -64,5 +64,30 @@ namespace Social_media
             }
             return maxUser;
         }
+        // ─────────────────────────────────────────────
+        // 3. Среднее количество друзей
+        // ─────────────────────────────────────────────
+        public double AverageDegree()
+        {
+            long total = 0;
+            for (int i = 0; i < UserCount; i++)
+                total += adjacency[i].Count;
+            return (double)total / UserCount;
+        }
+        // ─────────────────────────────────────────────
+        // 8. Распределение степеней
+        // ─────────────────────────────────────────────
+        /// <summary>Возвращает массив: degreeDistribution[d] = количество пользователей со степенью d.</summary>
+        public int[] DegreeDistribution()
+        {
+            int maxDeg = 0;
+            for (int i = 0; i < UserCount; i++)
+                if (adjacency[i].Count > maxDeg) maxDeg = adjacency[i].Count;
+
+            var dist = new int[maxDeg + 1];
+            for (int i = 0; i < UserCount; i++)
+                dist[adjacency[i].Count]++;
+            return dist;
+        }
     }
 }
