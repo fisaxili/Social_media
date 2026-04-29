@@ -29,6 +29,8 @@
             this.nudEdges = new System.Windows.Forms.NumericUpDown();
             this.btnGenerate = new System.Windows.Forms.Button();
             this.chkShowLabels = new System.Windows.Forms.CheckBox();
+            this.btnShowAdjacency = new System.Windows.Forms.Button();
+            this.txtAdjacency = new System.Windows.Forms.RichTextBox();
             this.lblLegend = new System.Windows.Forms.Label();
             this.lblGraphInfo = new System.Windows.Forms.Label();
             // Stats
@@ -88,6 +90,8 @@
 
             this.vizSidePanel.Dock = System.Windows.Forms.DockStyle.Left;
             this.vizSidePanel.Width = 200;
+            this.vizSidePanel.Controls.Add(this.txtAdjacency);
+            this.vizSidePanel.Controls.Add(this.btnShowAdjacency);
             this.vizSidePanel.Controls.Add(this.lblLegend);
             this.vizSidePanel.Controls.Add(this.lblGraphInfo);
             this.vizSidePanel.Controls.Add(this.chkShowLabels);
@@ -134,6 +138,18 @@
             this.lblLegend.Size = new System.Drawing.Size(175, 80);
             this.lblLegend.Text = "Цвет узла:\n● синий — мало друзей\n● красный — много друзей";
             this.lblLegend.Font = new System.Drawing.Font("Segoe UI", 8.5F);
+
+            this.btnShowAdjacency.Location = new System.Drawing.Point(10, 480);
+            this.btnShowAdjacency.Size = new System.Drawing.Size(170, 30);
+            this.btnShowAdjacency.Text = "Список смежности";
+            this.btnShowAdjacency.Click += new System.EventHandler(this.BtnShowAdjacency_Click);
+
+            this.txtAdjacency.Location = new System.Drawing.Point(10, 518);
+            this.txtAdjacency.Size = new System.Drawing.Size(175, 200);
+            this.txtAdjacency.ReadOnly = true;
+            this.txtAdjacency.Font = new System.Drawing.Font("Consolas", 8F);
+            this.txtAdjacency.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtAdjacency.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
 
             this.graphPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.graphPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
@@ -315,7 +331,8 @@
         private System.Windows.Forms.Panel vizSidePanel, graphPanel;
         private System.Windows.Forms.Label lblUsers, lblEdges, lblGraphInfo, lblLegend;
         private System.Windows.Forms.NumericUpDown nudUsers, nudEdges;
-        private System.Windows.Forms.Button btnGenerate;
+        private System.Windows.Forms.Button btnGenerate, btnShowAdjacency;
+        private System.Windows.Forms.RichTextBox txtAdjacency;
         private System.Windows.Forms.CheckBox chkShowLabels;
         // Stats
         private System.Windows.Forms.Panel statsSidePanel, statsPanel, degreeChartPanel;
