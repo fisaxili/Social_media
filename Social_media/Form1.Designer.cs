@@ -81,7 +81,80 @@
             this.mainTabControl.Controls.Add(this.tabBFS);
             this.mainTabControl.Controls.Add(this.tabPath);
 
+            // ── TAB 1: Граф ──────────────────────────────────────────
+            this.tabVisualization.Text = "Граф";
+            this.tabVisualization.Controls.Add(this.graphPanel);
+            this.tabVisualization.Controls.Add(this.vizSidePanel);
 
+            this.vizSidePanel.Dock = System.Windows.Forms.DockStyle.Left;
+            this.vizSidePanel.Width = 200;
+            this.vizSidePanel.Controls.Add(this.lblLegend);
+            this.vizSidePanel.Controls.Add(this.lblGraphInfo);
+            this.vizSidePanel.Controls.Add(this.chkShowLabels);
+            this.vizSidePanel.Controls.Add(this.btnGenerate);
+            this.vizSidePanel.Controls.Add(this.nudEdges);
+            this.vizSidePanel.Controls.Add(this.lblEdges);
+            this.vizSidePanel.Controls.Add(this.nudUsers);
+            this.vizSidePanel.Controls.Add(this.lblUsers);
+
+            this.lblUsers.AutoSize = true;
+            this.lblUsers.Location = new System.Drawing.Point(10, 10);
+            this.lblUsers.Text = "Пользователей:";
+
+            this.nudUsers.Location = new System.Drawing.Point(10, 30);
+            this.nudUsers.Width = 170;
+            this.nudUsers.Minimum = 10;
+            this.nudUsers.Maximum = 500;
+            this.nudUsers.Value = 500;
+
+            this.lblEdges.AutoSize = true;
+            this.lblEdges.Location = new System.Drawing.Point(10, 60);
+            this.lblEdges.Text = "Связей:";
+
+            this.nudEdges.Location = new System.Drawing.Point(10, 80);
+            this.nudEdges.Width = 170;
+            this.nudEdges.Minimum = 10;
+            this.nudEdges.Maximum = 2000;
+            this.nudEdges.Value = 2000;
+
+            this.btnGenerate.Location = new System.Drawing.Point(10, 115);
+            this.btnGenerate.Size = new System.Drawing.Size(170, 30);
+            this.btnGenerate.Text = "Сгенерировать граф";
+            this.btnGenerate.Click += new System.EventHandler(this.BtnGenerate_Click);
+
+            this.chkShowLabels.AutoSize = true;
+            this.chkShowLabels.Location = new System.Drawing.Point(10, 155);
+            this.chkShowLabels.Text = "Показывать метки";
+
+            this.lblGraphInfo.Location = new System.Drawing.Point(10, 185);
+            this.lblGraphInfo.Size = new System.Drawing.Size(175, 200);
+            this.lblGraphInfo.Text = "Граф не загружен";
+
+            this.lblLegend.Location = new System.Drawing.Point(10, 395);
+            this.lblLegend.Size = new System.Drawing.Size(175, 80);
+            this.lblLegend.Text = "Цвет узла:\n● синий — мало друзей\n● красный — много друзей";
+            this.lblLegend.Font = new System.Drawing.Font("Segoe UI", 8.5F);
+
+            this.graphPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.graphPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+
+
+
+            // ── Form ─────────────────────────────────────────────────
+            this.ClientSize = new System.Drawing.Size(1200, 800);
+            this.MinimumSize = new System.Drawing.Size(900, 600);
+            this.Controls.Add(this.mainTabControl);
+            this.Text = "Анализатор социальной сети";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+
+            ((System.ComponentModel.ISupportInitialize)this.nudUsers).EndInit();
+            ((System.ComponentModel.ISupportInitialize)this.nudEdges).EndInit();
+            ((System.ComponentModel.ISupportInitialize)this.nudBfsSource).EndInit();
+            ((System.ComponentModel.ISupportInitialize)this.nudBfsDepth).EndInit();
+            ((System.ComponentModel.ISupportInitialize)this.nudPathFrom).EndInit();
+            ((System.ComponentModel.ISupportInitialize)this.nudPathTo).EndInit();
+            this.ResumeLayout(false);
+            this.PerformLayout();
         }
 
         #endregion
