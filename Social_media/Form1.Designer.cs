@@ -2,38 +2,115 @@
 {
     partial class Form1
     {
-        /// <summary>
-        ///  Required designer variable.
-        /// </summary>
         private System.ComponentModel.IContainer components = null;
 
-        /// <summary>
-        ///  Clean up any resources being used.
-        /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
             if (disposing && (components != null))
-            {
                 components.Dispose();
-            }
             base.Dispose(disposing);
         }
 
         #region Windows Form Designer generated code
 
-        /// <summary>
-        ///  Required method for Designer support - do not modify
-        ///  the contents of this method with the code editor.
-        /// </summary>
         private void InitializeComponent()
         {
-            components = new System.ComponentModel.Container();
-            AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 450);
-            Text = "Form1";
+            this.mainTabControl = new System.Windows.Forms.TabControl();
+            this.tabVisualization = new System.Windows.Forms.TabPage();
+            this.tabStats = new System.Windows.Forms.TabPage();
+            this.tabBFS = new System.Windows.Forms.TabPage();
+            this.tabPath = new System.Windows.Forms.TabPage();
+            // Viz
+            this.vizSidePanel = new System.Windows.Forms.Panel();
+            this.graphPanel = new System.Windows.Forms.Panel();
+            this.lblUsers = new System.Windows.Forms.Label();
+            this.nudUsers = new System.Windows.Forms.NumericUpDown();
+            this.lblEdges = new System.Windows.Forms.Label();
+            this.nudEdges = new System.Windows.Forms.NumericUpDown();
+            this.btnGenerate = new System.Windows.Forms.Button();
+            this.chkShowLabels = new System.Windows.Forms.CheckBox();
+            this.lblLegend = new System.Windows.Forms.Label();
+            this.lblGraphInfo = new System.Windows.Forms.Label();
+            // Stats
+            this.statsSidePanel = new System.Windows.Forms.Panel();
+            this.statsPanel = new System.Windows.Forms.Panel();
+            this.lblStatsTitle = new System.Windows.Forms.Label();
+            this.btnCalcStats = new System.Windows.Forms.Button();
+            this.btnCalcDiameter = new System.Windows.Forms.Button();
+            this.progressBar = new System.Windows.Forms.ProgressBar();
+            this.lblProgress = new System.Windows.Forms.Label();
+            this.txtStats = new System.Windows.Forms.RichTextBox();
+            this.degreeChartPanel = new System.Windows.Forms.Panel();
+            this.lblChartTitle = new System.Windows.Forms.Label();
+            // BFS
+            this.bfsSidePanel = new System.Windows.Forms.Panel();
+            this.bfsHighlightPanel = new System.Windows.Forms.Panel();
+            this.lblBfsVizTitle = new System.Windows.Forms.Label();
+            this.lblBfsSource = new System.Windows.Forms.Label();
+            this.nudBfsSource = new System.Windows.Forms.NumericUpDown();
+            this.lblBfsDepth = new System.Windows.Forms.Label();
+            this.nudBfsDepth = new System.Windows.Forms.NumericUpDown();
+            this.btnBfs = new System.Windows.Forms.Button();
+            this.txtBfsResult = new System.Windows.Forms.RichTextBox();
+            // Path
+            this.pathSidePanel = new System.Windows.Forms.Panel();
+            this.pathVizPanel = new System.Windows.Forms.Panel();
+            this.lblPathVizTitle = new System.Windows.Forms.Label();
+            this.lblPathFrom = new System.Windows.Forms.Label();
+            this.nudPathFrom = new System.Windows.Forms.NumericUpDown();
+            this.lblPathTo = new System.Windows.Forms.Label();
+            this.nudPathTo = new System.Windows.Forms.NumericUpDown();
+            this.btnFindPath = new System.Windows.Forms.Button();
+            this.txtPathResult = new System.Windows.Forms.RichTextBox();
+
+            ((System.ComponentModel.ISupportInitialize)this.nudUsers).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)this.nudEdges).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)this.nudBfsSource).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)this.nudBfsDepth).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)this.nudPathFrom).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)this.nudPathTo).BeginInit();
+            this.SuspendLayout();
+
+            // ── mainTabControl ───────────────────────────────────────
+            this.mainTabControl.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.mainTabControl.Location = new System.Drawing.Point(0, 0);
+            this.mainTabControl.Size = new System.Drawing.Size(1200, 800);
+            this.mainTabControl.TabIndex = 0;
+            this.mainTabControl.Controls.Add(this.tabVisualization);
+            this.mainTabControl.Controls.Add(this.tabStats);
+            this.mainTabControl.Controls.Add(this.tabBFS);
+            this.mainTabControl.Controls.Add(this.tabPath);
+
+
         }
 
         #endregion
+
+        private System.Windows.Forms.TabControl mainTabControl;
+        private System.Windows.Forms.TabPage tabVisualization, tabStats, tabBFS, tabPath;
+        // Viz
+        private System.Windows.Forms.Panel vizSidePanel, graphPanel;
+        private System.Windows.Forms.Label lblUsers, lblEdges, lblGraphInfo, lblLegend;
+        private System.Windows.Forms.NumericUpDown nudUsers, nudEdges;
+        private System.Windows.Forms.Button btnGenerate;
+        private System.Windows.Forms.CheckBox chkShowLabels;
+        // Stats
+        private System.Windows.Forms.Panel statsSidePanel, statsPanel, degreeChartPanel;
+        private System.Windows.Forms.Label lblStatsTitle, lblChartTitle, lblProgress;
+        private System.Windows.Forms.Button btnCalcStats, btnCalcDiameter;
+        private System.Windows.Forms.ProgressBar progressBar;
+        private System.Windows.Forms.RichTextBox txtStats;
+        // BFS
+        private System.Windows.Forms.Panel bfsSidePanel, bfsHighlightPanel;
+        private System.Windows.Forms.Label lblBfsSource, lblBfsDepth, lblBfsVizTitle;
+        private System.Windows.Forms.NumericUpDown nudBfsSource, nudBfsDepth;
+        private System.Windows.Forms.Button btnBfs;
+        private System.Windows.Forms.RichTextBox txtBfsResult;
+        // Path
+        private System.Windows.Forms.Panel pathSidePanel, pathVizPanel;
+        private System.Windows.Forms.Label lblPathFrom, lblPathTo, lblPathVizTitle;
+        private System.Windows.Forms.NumericUpDown nudPathFrom, nudPathTo;
+        private System.Windows.Forms.Button btnFindPath;
+        private System.Windows.Forms.RichTextBox txtPathResult;
     }
 }
