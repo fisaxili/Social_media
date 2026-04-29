@@ -131,5 +131,55 @@ namespace Social_media
             }
             return result;
         }
+        // ─────────────────────────────────────────────
+        // 5. Кратчайший путь между двумя пользователями (BFS)
+        // ─────────────────────────────────────────────
+        /// <summary>
+        /// Возвращает список вершин кратчайшего пути от source до target,
+        /// или пустой список если пути нет.
+        /// </summary>
+        public List<int> ShortestPath(int source, int target)
+        {
+            if (source == target) return new List<int> { source };
+
+            var prev = new int[UserCount];
+            var dist = new int[UserCount];
+            for (int i = 0; i < UserCount; i++) { prev[i] = -1; dist[i] = -1; }
+
+            var queue = new int[UserCount];
+            int head = 0, tail = 0;
+
+            dist[source] = 0;
+            queue[tail++] = source;
+
+            bool found = false;
+            while (head < tail && !found)
+            {
+                int cur = queue[head++];
+                foreach (int nb in adjacency[cur])
+                {
+                    if (dist[nb] == -1)
+                    {
+                        dist[nb] = dist[cur] + 1;
+                        prev[nb] = cur;
+                        if (nb == target) { found = true; break; }
+                        queue[tail++] = nb;
+                    }
+                }
+            }
+
+            if (!found) return new List<int>();
+
+            // Восстановление пути
+            var path = new List<int>();
+            int node = target;
+            while (node != -1)
+            {
+                path.Add(node);
+                node = prev[node];
+            }
+            path.Reverse();
+            return path;
+        }
     }
 }
