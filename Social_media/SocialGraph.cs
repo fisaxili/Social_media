@@ -74,6 +74,7 @@ namespace Social_media
                 total += adjacency[i].Count;
             return (double)total / UserCount;
         }
+
         // ─────────────────────────────────────────────
         // 8. Распределение степеней
         // ─────────────────────────────────────────────
@@ -88,6 +89,47 @@ namespace Social_media
             for (int i = 0; i < UserCount; i++)
                 dist[adjacency[i].Count]++;
             return dist;
+        }
+        // ─────────────────────────────────────────────
+        // 4. BFS — все пользователи на расстоянии <= k
+        // ─────────────────────────────────────────────
+        /// <summary>
+        /// Возвращает словарь: расстояние -> список пользователей на этом расстоянии от source.
+        /// Обходит до глубины maxDepth включительно.
+        /// </summary>
+        public Dictionary<int, List<int>> BfsLevels(int source, int maxDepth)
+        {
+            var result = new Dictionary<int, List<int>>();
+            var dist = new int[UserCount];
+            for (int i = 0; i < UserCount; i++) dist[i] = -1;
+
+            // Собственная очередь на массиве
+            var queue = new int[UserCount];
+            int head = 0, tail = 0;
+
+            dist[source] = 0;
+            queue[tail++] = source;
+
+            while (head < tail)
+            {
+                int cur = queue[head++];
+                int d = dist[cur];
+                if (d >= maxDepth) continue;
+
+                foreach (int nb in adjacency[cur])
+                {
+                    if (dist[nb] == -1)
+                    {
+                        dist[nb] = d + 1;
+                        queue[tail++] = nb;
+
+                        if (!result.ContainsKey(dist[nb]))
+                            result[dist[nb]] = new List<int>();
+                        result[dist[nb]].Add(nb);
+                    }
+                }
+            }
+            return result;
         }
     }
 }
