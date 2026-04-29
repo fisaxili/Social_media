@@ -42,14 +42,14 @@ namespace Social_media
 
         /// <summary>Получить список друзей пользователя.</summary>
         public IReadOnlyList<int> GetFriends(int user) => adjacency[user];
-        // ─────────────────────────────────────────────
-        // 1. Степень вершины (количество друзей)
-        // ─────────────────────────────────────────────
+
+        //Степень вершины (количество друзей)
+
         public int Degree(int user) => adjacency[user].Count;
 
-        // ─────────────────────────────────────────────
-        // 2. Пользователь с максимальным числом друзей
-        // ─────────────────────────────────────────────
+
+        //Пользователь с максимальным числом друзей
+
         public int MostPopularUser()
         {
             int maxUser = 0;
@@ -64,9 +64,9 @@ namespace Social_media
             }
             return maxUser;
         }
-        // ─────────────────────────────────────────────
-        // 3. Среднее количество друзей
-        // ─────────────────────────────────────────────
+
+        // Среднее количество друзей
+ 
         public double AverageDegree()
         {
             long total = 0;
@@ -75,9 +75,7 @@ namespace Social_media
             return (double)total / UserCount;
         }
 
-        // ─────────────────────────────────────────────
-        // 8. Распределение степеней
-        // ─────────────────────────────────────────────
+        // Распределение степеней
         /// <summary>Возвращает массив: degreeDistribution[d] = количество пользователей со степенью d.</summary>
         public int[] DegreeDistribution()
         {
@@ -90,9 +88,8 @@ namespace Social_media
                 dist[adjacency[i].Count]++;
             return dist;
         }
-        // ─────────────────────────────────────────────
-        // 4. BFS — все пользователи на расстоянии <= k
-        // ─────────────────────────────────────────────
+
+        // BFS — все пользователи на расстоянии <= k
         /// <summary>
         /// Возвращает словарь: расстояние -> список пользователей на этом расстоянии от source.
         /// Обходит до глубины maxDepth включительно.
@@ -131,9 +128,8 @@ namespace Social_media
             }
             return result;
         }
-        // ─────────────────────────────────────────────
-        // 5. Кратчайший путь между двумя пользователями (BFS)
-        // ─────────────────────────────────────────────
+
+        // Кратчайший путь между двумя пользователями (BFS)
         /// <summary>
         /// Возвращает список вершин кратчайшего пути от source до target,
         /// или пустой список если пути нет.
@@ -181,14 +177,14 @@ namespace Social_media
             path.Reverse();
             return path;
         }
-        // ─────────────────────────────────────────────
-        // 6. Проверка связности графа
-        // ─────────────────────────────────────────────
+
+        // Проверка связности графа
+
         public bool IsConnected() => CountComponents() == 1;
 
-        // ─────────────────────────────────────────────
-        // 7. Количество компонент связности
-        // ─────────────────────────────────────────────
+
+        // Количество компонент связности
+
         public int CountComponents()
         {
             var visited = new bool[UserCount];
@@ -250,10 +246,9 @@ namespace Social_media
             }
             return comp;
         }
-        // ─────────────────────────────────────────────
-        // 9. Диаметр графа (максимальное расстояние между любыми двумя вершинами)
-        //    Для больших графов используем эвристику: BFS из нескольких случайных вершин
-        // ─────────────────────────────────────────────
+
+        // Диаметр графа (максимальное расстояние между любыми двумя вершинами)
+        // Для больших графов используем эвристику: BFS из нескольких случайных вершин
         /// <summary>
         /// Вычисляет диаметр графа.
         /// Для связного графа — точный результат через BFS из каждой вершины (может быть медленно для 500 узлов).
@@ -291,5 +286,70 @@ namespace Social_media
             }
             return diameter;
         }
+
+        //  BFS-расстояния от одной вершины (для визуализации и статистики)
+        public int[] BfsDistances(int source)
+        {
+            var dist = new int[UserCount];
+            for (int i = 0; i < UserCount; i++) dist[i] = -1;
+            var queue = new int[UserCount];
+            int head = 0, tail = 0;
+            dist[source] = 0;
+            queue[tail++] = source;
+            while (head < tail)
+            {
+                int cur = queue[head++];
+                foreach (int nb in adjacency[cur])
+                {
+                    if (dist[nb] == -1)
+                    {
+                        dist[nb] = dist[cur] + 1;
+                        queue[tail++] = nb;
+                    }
+                }
+            }
+            return dist;
+        }
+
+        // Генерация случайного графа (500 узлов, ~2000 рёбер)
+        public static SocialGraph GenerateRandom(int users = 500, int edges = 2000, int seed = 42)
+        {
+            var graph = new SocialGraph(users);
+            var rng = new Random(seed);
+
+            // Сначала создаём связный остов через случайное дерево
+            var perm = new int[users];
+            for (int i = 0; i < users; i++) perm[i] = i;
+            // Перемешать (Fisher-Yates)
+            for (int i = users - 1; i > 0; i--)
+            {
+                int j = rng.Next(i + 1);
+                (perm[i], perm[j]) = (perm[j], perm[i]);
+            }
+            for (int i = 1; i < users; i++)
+                graph.AddEdge(perm[i], perm[rng.Next(i)]);
+
+            // Добавляем случайные рёбра до нужного количества
+            int attempts = 0;
+            while (CountEdges(graph) < edges && attempts < edges * 20)
+            {
+                int u = rng.Next(users);
+                int v = rng.Next(users);
+                graph.AddEdge(u, v);
+                attempts++;
+            }
+
+            return graph;
+        }
+
+        private static int CountEdges(SocialGraph g)
+        {
+            int total = 0;
+            for (int i = 0; i < g.UserCount; i++)
+                total += g.adjacency[i].Count;
+            return total / 2;
+        }
+
+        public int EdgeCount() => CountEdges(this);
     }
 }
