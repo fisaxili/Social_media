@@ -12,24 +12,24 @@ namespace Social_media
 {
     public partial class Form1 : Form
     {
-        // ── Граф и позиции узлов ─────────────────────────────────────
+        // ── Граф и позиции узлов 
         private SocialGraph? _graph;
         private PointF[]? _nodePos;          // позиции узлов на canvas
 
-        // ── Состояние BFS / пути ─────────────────────────────────────
+        // ── Состояние BFS / пути 
         private Dictionary<int, List<int>>? _bfsLevels;   // результат BFS по уровням
         private List<int>? _shortestPath;                  // кратчайший путь
         private int _bfsSource = -1;
         private int _pathSource = -1, _pathTarget = -1;
 
-        // ── Hover ────────────────────────────────────────────────────
+        // Hover 
         private int _hoveredNode = -1;
 
-        // ── Статистика ───────────────────────────────────────────────
+        //Статистика 
         private int[]? _degreeDistribution;
         private int _diameter = -1;
 
-        // ── Цвета ────────────────────────────────────────────────────
+        // Цвета 
         private static readonly Color[] LevelColors =
         {
             Color.FromArgb(255, 220, 50),   // 0 — источник
@@ -59,9 +59,7 @@ namespace Social_media
             // граф генерируется только по кнопке
         }
 
-        // ════════════════════════════════════════════════════════════
         // Генерация графа
-        // ════════════════════════════════════════════════════════════
         private void GenerateGraph()
         {
             int users = (int)nudUsers.Value;
@@ -112,9 +110,7 @@ namespace Social_media
             txtAdjacency.Text = sb.ToString();
         }
 
-        // ════════════════════════════════════════════════════════════
         // Размещение узлов — случайно по всей площади панели
-        // ════════════════════════════════════════════════════════════
         private void LayoutNodes()
         {
             if (_graph == null) return;
@@ -147,9 +143,7 @@ namespace Social_media
                 $"Самый популярный:\n  {_graph.UserNames[pop]}\n  ({_graph.Degree(pop)} друзей)";
         }
 
-        // ════════════════════════════════════════════════════════════
         // Отрисовка основного графа
-        // ════════════════════════════════════════════════════════════
         private void GraphPanel_Paint(object? sender, PaintEventArgs e)
         {
             if (_graph == null || _nodePos == null) return;
@@ -160,9 +154,7 @@ namespace Social_media
             DrawNodes(g, _nodePos, _graph, null, null, null);
         }
 
-        // ════════════════════════════════════════════════════════════
         // Отрисовка BFS-подсветки
-        // ════════════════════════════════════════════════════════════
         private void BfsHighlightPanel_Paint(object? sender, PaintEventArgs e)
         {
             if (_graph == null || _nodePos == null) return;
@@ -176,9 +168,7 @@ namespace Social_media
             DrawNodes(g, pos, _graph, _bfsLevels, _bfsSource == -1 ? (int?)null : _bfsSource, null);
         }
 
-        // ════════════════════════════════════════════════════════════
         // Отрисовка пути
-        // ════════════════════════════════════════════════════════════
         private void PathVizPanel_Paint(object? sender, PaintEventArgs e)
         {
             if (_graph == null || _nodePos == null) return;
@@ -191,9 +181,8 @@ namespace Social_media
             DrawNodes(g, pos, _graph, null, null, _shortestPath);
         }
 
-        // ════════════════════════════════════════════════════════════
         // Общие методы рисования
-        // ════════════════════════════════════════════════════════════
+
         private void DrawEdges(Graphics g, PointF[] pos, SocialGraph graph,
             Dictionary<int, List<int>>? bfsLevels, List<int>? path)
         {
@@ -321,9 +310,7 @@ namespace Social_media
             }
         }
 
-        // ════════════════════════════════════════════════════════════
         // Масштабирование позиций под другой размер панели
-        // ════════════════════════════════════════════════════════════
         private static PointF[] ScalePositions(PointF[] src, Size srcSize, Size dstSize)
         {
             if (srcSize.Width == 0 || srcSize.Height == 0) return src;
@@ -335,9 +322,7 @@ namespace Social_media
             return result;
         }
 
-        // ════════════════════════════════════════════════════════════
         // Hover на графе
-        // ════════════════════════════════════════════════════════════
         private void GraphPanel_MouseMove(object? sender, MouseEventArgs e)
         {
             // hover отключён — при 500 узлах перерисовка на каждое движение мыши тормозит
@@ -370,10 +355,7 @@ namespace Social_media
             }
             return found;
         }
-
-        // ════════════════════════════════════════════════════════════
         // Статистика
-        // ════════════════════════════════════════════════════════════
         private void BtnCalcStats_Click(object? sender, EventArgs e)
         {
             if (_graph == null) { MessageBox.Show("Сначала сгенерируйте граф."); return; }
@@ -450,9 +432,7 @@ namespace Social_media
             BtnCalcStats_Click(null, EventArgs.Empty);
         }
 
-        // ════════════════════════════════════════════════════════════
         // График распределения степеней
-        // ════════════════════════════════════════════════════════════
         private void DegreeChartPanel_Paint(object? sender, PaintEventArgs e)
         {
             var g = e.Graphics;
@@ -539,9 +519,7 @@ namespace Social_media
             }
         }
 
-        // ════════════════════════════════════════════════════════════
         // BFS по уровням
-        // ════════════════════════════════════════════════════════════
         private void BtnBfs_Click(object? sender, EventArgs e)
         {
             if (_graph == null) { MessageBox.Show("Сначала сгенерируйте граф."); return; }
@@ -577,10 +555,7 @@ namespace Social_media
             txtBfsResult.Text = sb.ToString();
             bfsHighlightPanel.Invalidate();
         }
-
-        // ════════════════════════════════════════════════════════════
         // Кратчайший путь
-        // ════════════════════════════════════════════════════════════
         private void BtnFindPath_Click(object? sender, EventArgs e)
         {
             if (_graph == null) { MessageBox.Show("Сначала сгенерируйте граф."); return; }
@@ -617,10 +592,8 @@ namespace Social_media
             pathVizPanel.Invalidate();
         }
 
-        // ════════════════════════════════════════════════════════════
         // Вспомогательная сортировка (сортировка вставками для малых массивов,
         // быстрая сортировка для больших — без использования Array.Sort)
-        // ════════════════════════════════════════════════════════════
         private static void SortArray(int[] arr)
         {
             QuickSort(arr, 0, arr.Length - 1);
