@@ -250,6 +250,46 @@ namespace Social_media
             }
             return comp;
         }
+        // ─────────────────────────────────────────────
+        // 9. Диаметр графа (максимальное расстояние между любыми двумя вершинами)
+        //    Для больших графов используем эвристику: BFS из нескольких случайных вершин
+        // ─────────────────────────────────────────────
+        /// <summary>
+        /// Вычисляет диаметр графа.
+        /// Для связного графа — точный результат через BFS из каждой вершины (может быть медленно для 500 узлов).
+        /// Для несвязного — диаметр наибольшей компоненты.
+        /// </summary>
+        public int Diameter(IProgress<int>? progress = null)
+        {
+            int diameter = 0;
+            var dist = new int[UserCount];
+            var queue = new int[UserCount];
 
+            for (int source = 0; source < UserCount; source++)
+            {
+                progress?.Report(source);
+
+                // BFS из source
+                for (int i = 0; i < UserCount; i++) dist[i] = -1;
+                int head = 0, tail = 0;
+                dist[source] = 0;
+                queue[tail++] = source;
+
+                while (head < tail)
+                {
+                    int cur = queue[head++];
+                    foreach (int nb in adjacency[cur])
+                    {
+                        if (dist[nb] == -1)
+                        {
+                            dist[nb] = dist[cur] + 1;
+                            if (dist[nb] > diameter) diameter = dist[nb];
+                            queue[tail++] = nb;
+                        }
+                    }
+                }
+            }
+            return diameter;
+        }
     }
 }
