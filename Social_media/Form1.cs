@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Social_media;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace Social_media
 {
@@ -110,8 +111,8 @@ namespace Social_media
             }
             txtAdjacency.Text = sb.ToString();
         }
-    }
-            // ════════════════════════════════════════════════════════════
+
+        // ════════════════════════════════════════════════════════════
         // Размещение узлов — случайно по всей площади панели
         // ════════════════════════════════════════════════════════════
         private void LayoutNodes()
@@ -369,8 +370,275 @@ namespace Social_media
             }
             return found;
         }
+
+        // ════════════════════════════════════════════════════════════
+        // Статистика
+        // ════════════════════════════════════════════════════════════
+        private void BtnCalcStats_Click(object? sender, EventArgs e)
+        {
+            if (_graph == null) { MessageBox.Show("Сначала сгенерируйте граф."); return; }
+
+            _degreeDistribution = _graph.DegreeDistribution();
+            int pop = _graph.MostPopularUser();
+            int components = _graph.CountComponents();
+            bool connected = components == 1;
+            double avg = _graph.AverageDegree();
+            int edges = _graph.EdgeCount();
+
+            // Медиана степени
+            var degrees = new int[_graph.UserCount];
+            for (int i = 0; i < _graph.UserCount; i++) degrees[i] = _graph.Degree(i);
+            SortArray(degrees);
+            int median = degrees[degrees.Length / 2];
+
+            // Максимальная и минимальная степень
+            int minDeg = degrees[0], maxDeg = degrees[^1];
+
+            var sb = new StringBuilder();
+            sb.AppendLine("═══ ОБЩАЯ СТАТИСТИКА ═══");
+            sb.AppendLine($"Пользователей:      {_graph.UserCount}");
+            sb.AppendLine($"Связей (рёбер):     {edges}");
+            sb.AppendLine($"Компонент связности:{components}");
+            sb.AppendLine($"Граф связный:       {(connected ? "Да ✓" : "Нет ✗")}");
+            sb.AppendLine();
+            sb.AppendLine("═══ СТЕПЕНИ ВЕРШИН ═══");
+            sb.AppendLine($"Среднее кол-во друзей: {avg:F3}");
+            sb.AppendLine($"Медиана:               {median}");
+            sb.AppendLine($"Минимум:               {minDeg}");
+            sb.AppendLine($"Максимум:              {maxDeg}");
+            sb.AppendLine();
+            sb.AppendLine("═══ САМЫЙ ПОПУЛЯРНЫЙ ═══");
+            sb.AppendLine($"{_graph.UserNames[pop]}  (ID {pop + 1})");
+            sb.AppendLine($"Друзей: {_graph.Degree(pop)}");
+            sb.AppendLine();
+            sb.AppendLine("═══ ДИАМЕТР ═══");
+            if (_diameter >= 0)
+                sb.AppendLine($"Диаметр графа: {_diameter}");
+            else
+                sb.AppendLine("Нажмите «Вычислить диаметр»");
+
+            txtStats.Text = sb.ToString();
+            degreeChartPanel.Invalidate();
+        }
+
+        private async void BtnCalcDiameter_Click(object? sender, EventArgs e)
+        {
+            if (_graph == null) { MessageBox.Show("Сначала сгенерируйте граф."); return; }
+
+            btnCalcDiameter.Enabled = false;
+            btnCalcStats.Enabled = false;
+            progressBar.Visible = true;
+            progressBar.Maximum = _graph.UserCount;
+            progressBar.Value = 0;
+            lblProgress.Text = "Вычисление диаметра...";
+
+            var progress = new Progress<int>(v =>
+            {
+                progressBar.Value = Math.Min(v, progressBar.Maximum);
+                lblProgress.Text = $"BFS из вершины {v + 1} / {_graph.UserCount}";
+            });
+
+            int diam = await Task.Run(() => _graph.Diameter(progress));
+            _diameter = diam;
+
+            progressBar.Visible = false;
+            lblProgress.Text = $"Диаметр вычислен: {_diameter}";
+            btnCalcDiameter.Enabled = true;
+            btnCalcStats.Enabled = true;
+
+            // Обновить текст статистики
+            BtnCalcStats_Click(null, EventArgs.Empty);
+        }
+
+        // ════════════════════════════════════════════════════════════
+        // График распределения степеней
+        // ════════════════════════════════════════════════════════════
+        private void DegreeChartPanel_Paint(object? sender, PaintEventArgs e)
+        {
+            var g = e.Graphics;
+            g.SmoothingMode = SmoothingMode.AntiAlias;
+
+            if (_degreeDistribution == null || _graph == null)
+            {
+                using var hint = new SolidBrush(Color.FromArgb(150, 100, 100, 100));
+                using var f = new Font("Segoe UI", 11f);
+                g.DrawString("Нажмите «Вычислить статистику»", f, hint, 20, 20);
+                return;
+            }
+
+            int W = degreeChartPanel.Width;
+            int H = degreeChartPanel.Height;
+            int pad = 50;
+
+            // Группируем степени в бины для читаемости
+            int maxDeg = _degreeDistribution.Length - 1;
+            int binCount = Math.Min(40, maxDeg + 1);
+            var bins = new int[binCount];
+            var binLabels = new string[binCount];
+
+            for (int d = 0; d <= maxDeg; d++)
+            {
+                int bin = (int)((long)d * binCount / (maxDeg + 1));
+                if (bin >= binCount) bin = binCount - 1;
+                bins[bin] += _degreeDistribution[d];
+            }
+            for (int b = 0; b < binCount; b++)
+            {
+                int lo = b * (maxDeg + 1) / binCount;
+                int hi = (b + 1) * (maxDeg + 1) / binCount - 1;
+                binLabels[b] = lo == hi ? $"{lo}" : $"{lo}-{hi}";
+            }
+
+            int maxVal = 1;
+            for (int i = 0; i < binCount; i++) if (bins[i] > maxVal) maxVal = bins[i];
+
+            float barW = (float)(W - pad * 2) / binCount;
+            float chartH = H - pad * 2;
+
+            // Оси
+            using var axisPen = new Pen(Color.FromArgb(150, 150, 150), 1f);
+            g.DrawLine(axisPen, pad, pad, pad, H - pad);
+            g.DrawLine(axisPen, pad, H - pad, W - pad, H - pad);
+
+            using var barBrush = new LinearGradientBrush(
+                new Point(0, pad), new Point(0, H - pad),
+                Color.FromArgb(100, 180, 255), Color.FromArgb(50, 80, 200));
+            using var labelFont = new Font("Segoe UI", 7f);
+            using var labelBrush = new SolidBrush(Color.FromArgb(80, 80, 80));
+            using var valFont = new Font("Segoe UI", 7.5f, FontStyle.Bold);
+            using var valBrush = new SolidBrush(Color.FromArgb(40, 40, 40));
+
+            for (int i = 0; i < binCount; i++)
+            {
+                float bh = bins[i] == 0 ? 0 : (float)bins[i] / maxVal * chartH;
+                float bx = pad + i * barW + 1;
+                float by = H - pad - bh;
+
+                g.FillRectangle(barBrush, bx, by, barW - 2, bh);
+
+                // Подпись оси X (каждый 4-й бин)
+                if (i % 4 == 0)
+                    g.DrawString(binLabels[i], labelFont, labelBrush, bx, H - pad + 3);
+
+                // Значение над столбцом
+                if (bins[i] > 0 && bh > 14)
+                    g.DrawString(bins[i].ToString(), valFont, valBrush, bx, by - 14);
+            }
+
+            // Подписи осей
+            using var axisFont = new Font("Segoe UI", 9f, FontStyle.Bold);
+            using var axisBrush = new SolidBrush(Color.FromArgb(40, 40, 40));
+            g.DrawString("Степень (кол-во друзей)", axisFont, axisBrush, W / 2 - 80, H - 18);
+
+            for (int tick = 0; tick <= 4; tick++)
+            {
+                int val = maxVal * tick / 4;
+                float ty = H - pad - (float)val / maxVal * chartH;
+                g.DrawLine(axisPen, pad - 4, ty, pad, ty);
+                g.DrawString(val.ToString(), labelFont, labelBrush, 2, ty - 6);
+            }
+        }
+
+        // ════════════════════════════════════════════════════════════
+        // BFS по уровням
+        // ════════════════════════════════════════════════════════════
+        private void BtnBfs_Click(object? sender, EventArgs e)
+        {
+            if (_graph == null) { MessageBox.Show("Сначала сгенерируйте граф."); return; }
+
+            int source = (int)nudBfsSource.Value - 1;
+            int depth = (int)nudBfsDepth.Value;
+
+            _bfsSource = source;
+            _bfsLevels = _graph.BfsLevels(source, depth);
+
+            int total = 0;
+            foreach (var kv in _bfsLevels) total += kv.Value.Count;
+
+            var sb = new StringBuilder();
+            sb.AppendLine($"BFS от вершины «User_{source + 1}» ({total + 1} вершин)");
+            sb.AppendLine(new string('─', 45));
+            sb.AppendLine($"  Уровень 0: User_{source + 1}");
+
+            for (int d = 1; d <= depth; d++)
+            {
+                if (_bfsLevels.TryGetValue(d, out var list) && list.Count > 0)
+                {
+                    sb.AppendLine($"  Уровень {d} ({list.Count} польз.):");
+                    int show = Math.Min(list.Count, 10);
+                    for (int i = 0; i < show; i++)
+                        sb.AppendLine($"    User_{list[i] + 1}");
+                    if (list.Count > show)
+                        sb.AppendLine($"    ... ещё {list.Count - show}");
+                    sb.AppendLine();
+                }
+            }
+
+            txtBfsResult.Text = sb.ToString();
+            bfsHighlightPanel.Invalidate();
+        }
+
+        // ════════════════════════════════════════════════════════════
+        // Кратчайший путь
+        // ════════════════════════════════════════════════════════════
+        private void BtnFindPath_Click(object? sender, EventArgs e)
+        {
+            if (_graph == null) { MessageBox.Show("Сначала сгенерируйте граф."); return; }
+
+            int from = (int)nudPathFrom.Value - 1;
+            int to = (int)nudPathTo.Value - 1;
+
+            _pathSource = from;
+            _pathTarget = to;
+            _shortestPath = _graph.ShortestPath(from, to);
+
+            var sb = new StringBuilder();
+            sb.AppendLine($"От: User_{from + 1}");
+            sb.AppendLine($"До: User_{to + 1}");
+            sb.AppendLine();
+
+            if (_shortestPath.Count == 0)
+            {
+                sb.AppendLine("Путь не найден.");
+                sb.AppendLine("Пользователи в разных компонентах.");
+            }
+            else
+            {
+                sb.AppendLine($"Длина: {_shortestPath.Count - 1} шагов");
+                sb.AppendLine();
+                for (int i = 0; i < _shortestPath.Count; i++)
+                {
+                    int node = _shortestPath[i];
+                    sb.AppendLine($"  {i}. User_{node + 1}");
+                }
+            }
+
+            txtPathResult.Text = sb.ToString();
+            pathVizPanel.Invalidate();
+        }
+
+        // ════════════════════════════════════════════════════════════
+        // Вспомогательная сортировка (сортировка вставками для малых массивов,
+        // быстрая сортировка для больших — без использования Array.Sort)
+        // ════════════════════════════════════════════════════════════
+        private static void SortArray(int[] arr)
+        {
+            QuickSort(arr, 0, arr.Length - 1);
+        }
+
+        private static void QuickSort(int[] arr, int lo, int hi)
+        {
+            if (lo >= hi) return;
+            int pivot = arr[(lo + hi) / 2];
+            int i = lo, j = hi;
+            while (i <= j)
+            {
+                while (arr[i] < pivot) i++;
+                while (arr[j] > pivot) j--;
+                if (i <= j) { (arr[i], arr[j]) = (arr[j], arr[i]); i++; j--; }
+            }
+            QuickSort(arr, lo, j);
+            QuickSort(arr, i, hi);
+        }
     }
 }
-
-
-
