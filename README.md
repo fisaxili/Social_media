@@ -214,6 +214,19 @@ dotnet run --project Social_media/Social_media.csproj
 dotnet test Social_media.Tests/Social_media.Tests.csproj
 ```
 
+## 8. Технологический стек
+
+| Компонент | Версия |
+|-----------|--------|
+| Язык | C# 12 |
+| Платформа | .NET 8.0 |
+| UI | Windows Forms (WinForms) |
+| Хранение графа | Список смежности `Dictionary<string, List<(string, double)>>` |
+| Тестирование | MSTest 3.3.1 |
+| Покрытие кода | coverlet.collector 10.0.0 + ReportGenerator |
+| IDE | Visual Studio 2026 |
+
+---
 ### Системные требования
 
 - .NET 8 SDK или выше
