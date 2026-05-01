@@ -221,8 +221,6 @@ dotnet test Social_media.Tests/Social_media.Tests.csproj
 | Язык | C# 12 |
 | Платформа | .NET 8.0 |
 | UI | Windows Forms (WinForms) |
-| Хранение графа | Список смежности `Dictionary<string, List<(string, double)>>` |
-| Тестирование | MSTest 3.3.1 |
 | Покрытие кода | coverlet.collector 10.0.0 + ReportGenerator |
 | IDE | Visual Studio 2026 |
 
